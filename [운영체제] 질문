@@ -4,7 +4,9 @@
 
 1. global lock을 하나 더 만들지 않고도 교수님처럼 0.5초마다 DB 값이 갱신 되는 것을 확인할 수 있는지 궁금합니다. 1-2번과 1-3의 출력과 코드를 보시고 제가 방향을 잘못 잡고 있다면 알려주시면 감사하겠습니다.
 
-2. output_example에서 sensor는 10개가 돌아가는데 터미널에 출력되는 로그는 DEF, ACC, GYRO, MAG, BAR로 5가지입니다. 이 부분은 저희의 편의를 위해 일부로 줄이셨다고 보는게 맞는지요?
+2. output_example에서 sensor는 10개가 돌아가는데 터미널에 출력되는 로그는 DEF, ACC, GYRO, MAG, BAR로 5가지입니다. 이 부분은 저희의 편의를 위해 일부로 줄이셨다고 보는게 맞을까요?
+
+3. 터미널에 출력되는 로그 파일은 따로 저장해서 함께 제출하면 됩니까?
 
 ### 1-1. 교수님의 예시 파일에서 최초 10줄입니다.
 [SENSOR DB] 1716901741.180771 - DEF-0.233567 | ACC-0.731594 | GYRO-0.247644 | MAG-0.628995 | BAR-0.939703 | [Sensor Status]: 0 0 0 0 0 0 0 0 0 0
@@ -93,4 +95,30 @@ class SensorDB(object):
         wait_time = start_write_time - start_wait_time
         write_time = end_write_time - start_write_time
         return [write_data, write_time, wait_time]
+
+#### 출력 코드 ####
+def get_log_from_db(t_sensor_db):
+    states = []
+    
+    log = f'[SENSOR DB] {"{:.6f}".format(time.time())} - '
+    data = t_sensor_db.get_db_contents()
+    for key, value in data.items():
+        log += f"{key}-{value:02d} | "
+    
+    log += '[Sensor Status]: '
+    for a in sensor_list:
+        states.append(a.get_sensor_status())
+    for state in states:
+        log += f'{state} ' 
+        
+    return log
+# ======================================================== R U N ========================================================
+    for k in range(0, run_time):
+        for _ in range(10):
+            print(get_log_from_db(t_sensor_db))
+            time.sleep(0.1)
+        print()
+            
+            # time.sleep(1)
+# =======================================================================================================================
 
