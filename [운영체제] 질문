@@ -1,0 +1,96 @@
+안녕하십니까 교수님 운영체제 104분반 수업을 듣고 있는 202130422 박연수입니다. 
+
+과제 중 막히는 부분이 있어서 늦은 밤임에도 불구하고 연락드리게 됐습니다. 
+
+1. global lock을 하나 더 만들지 않고도 교수님처럼 0.5초마다 DB 값이 갱신 되는 것을 확인할 수 있는지 궁금합니다. 1-2번과 1-3의 출력과 코드를 보시고 제가 방향을 잘못 잡고 있다면 알려주시면 감사하겠습니다.
+
+2. output_example에서 sensor는 10개가 돌아가는데 터미널에 출력되는 로그는 DEF, ACC, GYRO, MAG, BAR로 5가지입니다. 이 부분은 저희의 편의를 위해 일부로 줄이셨다고 보는게 맞는지요?
+
+### 1-1. 교수님의 예시 파일에서 최초 10줄입니다.
+[SENSOR DB] 1716901741.180771 - DEF-0.233567 | ACC-0.731594 | GYRO-0.247644 | MAG-0.628995 | BAR-0.939703 | [Sensor Status]: 0 0 0 0 0 0 0 0 0 0
+[SENSOR DB] 1716901741.292765 - DEF-0.233567 | ACC-0.731594 | GYRO-0.247644 | MAG-0.628995 | BAR-0.939703 | [Sensor Status]: 0 0 0 0 0 0 0 0 0 0 
+[SENSOR DB] 1716901741.401186 - DEF-0.233567 | ACC-0.731594 | GYRO-0.247644 | MAG-0.628995 | BAR-0.939703 | [Sensor Status]: 0 0 0 0 0 0 0 0 0 0 
+[SENSOR DB] 1716901741.511180 - DEF-0.233567 | ACC-0.731594 | GYRO-0.247644 | MAG-0.628995 | BAR-0.939703 | [Sensor Status]: 0 0 0 0 0 0 0 0 0 0 
+[SENSOR DB] 1716901741.622241 - DEF-0.233567 | ACC-0.731594 | GYRO-0.247644 | MAG-0.628995 | BAR-0.939703 | [Sensor Status]: 0 0 0 0 0 0 0 0 0 0 
+[SENSOR DB] 1716901741.732241 - DEF-0.079985 | ACC-0.941402 | GYRO-0.247644 | MAG-0.628995 | BAR-0.939703 | [Sensor Status]: 0 0 0 0 0 0 0 0 0 0 < 업데이트 지점
+[SENSOR DB] 1716901741.843240 - DEF-0.079985 | ACC-0.941402 | GYRO-0.247644 | MAG-0.628995 | BAR-0.939703 | [Sensor Status]: 0 0 0 0 0 0 0 0 0 0 
+[SENSOR DB] 1716901741.953753 - DEF-0.079985 | ACC-0.941402 | GYRO-0.247644 | MAG-0.628995 | BAR-0.939703 | [Sensor Status]: 0 0 0 0 0 0 0 0 0 0 
+[SENSOR DB] 1716901742.062801 - DEF-0.079985 | ACC-0.941402 | GYRO-0.247644 | MAG-0.628995 | BAR-0.939703 | [Sensor Status]: 0 0 0 0 0 0 0 0 0 0 
+[SENSOR DB] 1716901742.172210 - DEF-0.079985 | ACC-0.941402 | GYRO-0.964125 | MAG-0.628995 | BAR-0.939703 | [Sensor Status]: 0 0 0 0 0 0 0 0 0 0 
+
+DEF와 ACC 부분이 0.5초가 지났을때 update된 것을 확인 할 수 있습니다. 
+
+### 1-2. 제가 출력을 한 경우입니다. 
+read_write_lock_table의 경우 센서 유형별로 lock을 적용하기 위해 필요하다는 과제에 의해 코드를 작성했을때 
+아래와 같이 1초간 같은 값을 유지하다가 1초 후 값이 한번에 업데이트 되는 것을 확인 할 수 있었습니다. 
+[SENSOR DB] 1717678015.706763 - DEF-22 | GYRO-31 | MAG-20 | ACC-51 | [Sensor Status]: 0 0 0 0
+[SENSOR DB] 1717678015.807349 - DEF-22 | GYRO-31 | MAG-20 | ACC-51 | [Sensor Status]: 0 0 0 0 
+[SENSOR DB] 1717678015.908021 - DEF-22 | GYRO-31 | MAG-20 | ACC-51 | [Sensor Status]: 0 0 0 0 
+[SENSOR DB] 1717678016.008201 - DEF-22 | GYRO-31 | MAG-20 | ACC-51 | [Sensor Status]: 0 0 0 0 
+[SENSOR DB] 1717678016.108748 - DEF-22 | GYRO-31 | MAG-20 | ACC-51 | [Sensor Status]: 0 0 0 0 
+[SENSOR DB] 1717678016.209369 - DEF-22 | GYRO-31 | MAG-20 | ACC-51 | [Sensor Status]: 0 0 0 0 
+[SENSOR DB] 1717678016.309598 - DEF-22 | GYRO-31 | MAG-20 | ACC-51 | [Sensor Status]: 0 0 0 0 
+[SENSOR DB] 1717678016.410117 - DEF-22 | GYRO-31 | MAG-20 | ACC-51 | [Sensor Status]: 0 0 0 0 
+[SENSOR DB] 1717678016.510348 - DEF-22 | GYRO-31 | MAG-20 | ACC-51 | [Sensor Status]: 0 0 0 0 
+[SENSOR DB] 1717678016.610791 - DEF-22 | GYRO-31 | MAG-20 | ACC-51 | [Sensor Status]: 0 0 0 0 
+[SENSOR DB] 1717678016.711363 - DEF-15 | GYRO-71 | MAG-61 | ACC-64 | [Sensor Status]: 0 0 0 0 < 한번에 바뀌는 지점
+
+### 1-3. 교수님처럼 결과가 나오게 할 수는 있지만 이는 글로벌 락을 클래스 내에 하나 더 사용하는 방법입니다. 교수님께서 의도하신 방향과는 거리가 있어보입니다. 
+[SENSOR DB] 1717677859.579966 - ACC-25 | GYRO-33 | MAG-32 | DEF-21 | [Sensor Status]: 0 0 0 0
+[SENSOR DB] 1717677859.680693 - ACC-25 | GYRO-33 | MAG-83 | DEF-21 | [Sensor Status]: 0 0 0 0 
+[SENSOR DB] 1717677859.780993 - ACC-25 | GYRO-33 | MAG-83 | DEF-21 | [Sensor Status]: 0 0 0 0 
+[SENSOR DB] 1717677859.881428 - ACC-25 | GYRO-33 | MAG-83 | DEF-21 | [Sensor Status]: 0 0 0 0 
+[SENSOR DB] 1717677859.981720 - ACC-25 | GYRO-33 | MAG-83 | DEF-21 | [Sensor Status]: 0 0 0 0 
+[SENSOR DB] 1717677860.082205 - ACC-25 | GYRO-33 | MAG-83 | DEF-21 | [Sensor Status]: 0 0 0 0 
+[SENSOR DB] 1717677860.182703 - ACC-25 | GYRO-33 | MAG-83 | DEF-79 | [Sensor Status]: 0 0 0 0 <값이 하나만 바뀜
+[SENSOR DB] 1717677860.283476 - ACC-25 | GYRO-33 | MAG-83 | DEF-79 | [Sensor Status]: 0 0 0 0 
+[SENSOR DB] 1717677860.383899 - ACC-25 | GYRO-33 | MAG-83 | DEF-79 | [Sensor Status]: 0 0 0 0 
+[SENSOR DB] 1717677860.485513 - ACC-25 | GYRO-33 | MAG-83 | DEF-79 | [Sensor Status]: 0 0 0 0 
+
+
+##### 1-2. 맞다고 생각하는 코드#####
+    def process_write_request(self, t_sensor_type, t_sensor_data_amount, t_sensor_value):
+        start_wait_time = time.time()
+        
+        if t_sensor_type not in self.read_write_lock_table:
+            self.read_write_lock_table[t_sensor_type] = ReadWriteLock()
+        
+        self.read_write_lock_table[t_sensor_type].acquire_write()
+        start_write_time = time.time()
+
+        write_data = self.write_data_to_db(t_sensor_type, t_sensor_data_amount, t_sensor_value)
+        self.read_write_lock_table[t_sensor_type].release_write()
+
+        end_write_time = time.time()
+
+        wait_time = start_write_time - start_wait_time
+        write_time = end_write_time - start_write_time
+        return [write_data, write_time, wait_time]
+
+##### 1-3.  전역으로 사용할 global lock을 하나 더 생성하는 코드#####
+
+class SensorDB(object):
+
+    sensor_data_db = {}
+    sensor_global_lock = ReadWriteLock()
+.
+.
+.
+    def process_write_request(self, t_sensor_type, t_sensor_data_amount, t_sensor_value):
+        start_wait_time = time.time()
+        
+        if t_sensor_type not in self.read_write_lock_table: 
+            self.read_write_lock_table[t_sensor_type] = self.global_lock
+        
+        self.read_write_lock_table[t_sensor_type].acquire_write()
+        start_write_time = time.time()
+
+        write_data = self.write_data_to_db(t_sensor_type, t_sensor_data_amount, t_sensor_value)
+        self.read_write_lock_table[t_sensor_type].release_write()
+
+        end_write_time = time.time()
+
+        wait_time = start_write_time - start_wait_time
+        write_time = end_write_time - start_write_time
+        return [write_data, write_time, wait_time]
+
